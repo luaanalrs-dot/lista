@@ -61,6 +61,19 @@ h1{font:400 clamp(2rem,6vw,3.3rem)/1 "Merchant Copy",monospace;color:var(--gold)
 .pn a{display:inline-block;color:var(--ink);background:var(--gold);padding:8px 20px;border-radius:99px;text-decoration:none;margin-right:1rem}
 @media(max-width:640px){.pn{grid-template-columns:1fr}.pn>.ph{max-width:340px;justify-self:center;width:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+ .f[data-c="livros"] {
+  background-color: #e5c46a;
+  color: #1d0614;
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+ background-image: url("Convite%20anivers%C3%A1rio.png");
+background-size: cover;
+background-position: center;
+background-attachment: fixed;
+background-repeat: no-repeat;
+ 
 </style>
 </head>
 <body>
@@ -136,7 +149,7 @@ function draw(fade){
  const g=$("#gr"),go=()=>{
   g.innerHTML=cur.length?cur.slice(pg*per,pg*per+per).map((d,i)=>`<button class="cd" data-i="${pg*per+i}">${ph(d)}<div class="in"><div class="nm">${d.n}</div><div class="pr">${fmt(d.p)}</div></div></button>`).join(""):
   `<div class="msg" style="grid-column:1/-1;grid-row:1/-1"><p>${cat=="livros"?"os livros aparecem aqui.":"nada por aqui."}</p><a class="pill" href="${WL}" target="_blank" rel="noopener">${cat=="livros"?"abrir lista na amazon":""}</a></div>`;
-  g.querySelectorAll(".ph").forEach((p,i)=>{const d=cur[pg*per+i];if(d&&d.o)p.insertAdjacentHTML("beforeend","<em>atualmente esgotado</em>");else if(d&&d.a)p.insertAdjacentHTML("beforeend","<em class=\"a\">mais barato em outra loja</em>")});
+  g.querySelectorAll(".ph").forEach((p,i)=>{const d=cur[pg*per+i];if(d&&d.o)p.insertAdjacentHTML("beforeend","<em>atualmente esgotado</em>");else if(d&&d.a)p.insertAdjacentHTML("beforeend","<em class=\"a\">mais barato na Só Mega Promoções</em>")});
   g.style.opacity=1};
  if(fade){g.style.opacity=0;setTimeout(go,200)}else go();
  $("#pn").innerHTML=np>1?`<button class="pb" id="pv"${pg==0?" disabled":""}>anterior</button>`+Array.from({length:np},(_,i)=>`<button class="pb n" data-p="${i}"${i==pg?' aria-current="page"':""}>${i+1}</button>`).join("")+`<button class="pb" id="nx"${pg>=np-1?" disabled":""}>próxima</button>`:"";
