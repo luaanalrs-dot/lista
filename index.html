@@ -177,7 +177,6 @@ let sx=0;addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true}
 addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-sx;if(!$("#md").hidden||Math.abs(d)<60)return;
  if(d<0&&pg<Math.ceil(cur.length/per)-1){pg++;draw(1)}if(d>0&&pg>0){pg--;draw(1)}},{passive:true});
 draw(0);
-addEventListener("pointermove",e=>{$("#bg").style.transform=`translate(${(e.clientX/innerWidth-.5)*-22}px,${(e.clientY/innerHeight-.5)*-22}px)`});
 
 
 </script>
