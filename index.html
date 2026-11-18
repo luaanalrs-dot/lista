@@ -207,12 +207,20 @@ const OUT={
  const $=s=>document.querySelector(s),fmt=v=>v==null?"ver no link":"R$ "+v.toLocaleString("pt-BR",{minimumFractionDigits:2});
 const slug=s=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const img=d=>d.i||slug(d.n)+".jpg";
+ const sizeLabel=d=>{
+  const m=(d.x||"").match(/\b(tamanho|numeração)\s+([A-Za-z0-9]+)/i);
+  if(!m)return "";
+  return (m[1].toLowerCase()==="numeração"?"Numeração ":"Tamanho ")+m[2];
+};
 const cats=["tudo","roupas","calçados","beleza","papelaria","livros"];
 let cat="tudo",pg=0,per=8,cur=[];
 const EX=["jpg","jpeg","png","webp"];
 function er(m){const k=(+m.dataset.k||0)+1;if(!m.dataset.b||k>=EX.length){m.remove();return}m.dataset.k=k;m.src=m.dataset.b+"."+EX[k]}
-const ph=d=>{const b=img(d).replace(/\.jpg$/,"");return `<div class="ph"><svg><use href="#st"/></svg><img src="${img(d)}" data-b="${d.i?"":b}" alt="" onerror="er(this)"></div>`};
-const tabs=()=>cats.map(c=>{const n=D.filter(d=>c=="tudo"||d.c==c).length;return `<button class="f" data-c="${c}" aria-pressed="${c==cat}">${c}${n?` <small>${n}</small>`:""}</button>`}).join("")+`<small class="nt">preços e estoque mudam, confira no link</small>`;
+const ph=d=>{
+  const b=img(d).replace(/\.jpg$/,"");
+  const size=sizeLabel(d);
+  return `<div class="ph"><svg><use href="#st"/></svg>${size?`<span class="size-badge photo-size">${size}</span>`:""}<img src="${img(d)}" data-b="${d.i?"":b}" alt="" onerror="er(this)"></div>`;
+};const tabs=()=>cats.map(c=>{const n=D.filter(d=>c=="tudo"||d.c==c).length;return `<button class="f" data-c="${c}" aria-pressed="${c==cat}">${c}${n?` <small>${n}</small>`:""}</button>`}).join("")+`<small class="nt">preços e estoque mudam, confira no link</small>`;
 const mq=()=>{const g=$("#gr"),w=g.clientWidth,h=g.clientHeight,gap=14;let cols=w<420?2:w<720?3:4,rows;
  for(;;){const cw=(w-gap*(cols-1))/cols;rows=Math.floor((h+gap)/(cw+78+gap));if(rows>=(w<720?1:2)||cols>=6)break;cols++}
  rows=Math.min(3,Math.max(1,rows));g.style.gridTemplateColumns=`repeat(${cols},minmax(0,1fr))`;g.style.gridTemplateRows="";return cols*rows};
@@ -227,9 +235,30 @@ g.querySelectorAll(".ph").forEach((p,i)=>{const d=cur[pg*per+i];if(d&&d.o)p.inse
  if(fade){g.style.opacity=0;setTimeout(go,200)}else go();
  $("#pn").innerHTML=np>1?`<button class="pb" id="pv"${pg==0?" disabled":""}>anterior</button>`+Array.from({length:np},(_,i)=>`<button class="pb n" data-p="${i}"${i==pg?' aria-current="page"':""}>${i+1}</button>`).join("")+`<button class="pb" id="nx"${pg>=np-1?" disabled":""}>próxima</button>`:"";
 }
-function open(d){const u=d.u||"https://www.google.com/search?q="+encodeURIComponent(d.s+" "+d.n);
- const m=$("#md");m.innerHTML=`<div class="pn">${ph(d)}<div><h2>${d.n}</h2><div class="pr">${fmt(d.p)}</div><p>${d.s}${d.x?". "+d.x:""}</p>${d.o?`<p class="o">${OUT[d.c]||OUT.papelaria}</p>`:""}${d.a?`<p class="av">${d.a}</p>`:""}<a href="${u}" target="_blank" rel="noopener">ver produto</a><button class="f" id="cl">fechar</button></div></div>`;
- m.hidden=false;$("#cl").focus()}
+function open(d){
+  const u=d.u||"https://www.google.com/search?q="+encodeURIComponent(d.s+" "+d.n);
+  const m=$("#md");
+  const size=sizeLabel(d);
+  const extra=(d.x||"").replace(/\b(?:tamanho|numeração)\s+[A-Za-z0-9]+[,.]?\s*/i,"").trim();
+
+  m.innerHTML=`
+    <div class="pn">
+      ${ph(d)}
+      <div>
+        <h2>${d.n}</h2>
+        <div class="pr">${fmt(d.p)}</div>
+        ${size?`<div class="size-badge detail-size">${size}</div>`:""}
+        <p>${d.s}${extra?". "+extra:""}</p>
+        ${d.o?`<p class="o">${OUT[d.c]||OUT.papelaria}</p>`:""}
+        ${d.a?`<p class="av">${d.a}</p>`:""}
+        <a href="${u}" target="_blank" rel="noopener">ver produto</a>
+        <button class="f" id="cl">fechar</button>
+      </div>
+    </div>`;
+
+  m.hidden=false;
+  $("#cl").focus();
+}
 const close=()=>{$("#md").hidden=true};
 document.addEventListener("click",e=>{
  const c=e.target.closest("[data-c]");if(c){cat=c.dataset.c;pg=0;draw(0);return}
