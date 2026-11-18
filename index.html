@@ -179,27 +179,7 @@ addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-sx;if(!$("#m
 draw(0);
 addEventListener("pointermove",e=>{$("#bg").style.transform=`translate(${(e.clientX/innerWidth-.5)*-22}px,${(e.clientY/innerHeight-.5)*-22}px)`});
 
- 
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
 
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = "#e5c46a";
-    ctx.fill();
-    ctx.restore();
-
-    favicon.href = canvas.toDataURL("image/png");
-
-    frame = (frame + 1) % totalFrames;
-  }
-
-  animate();
-  setInterval(animate, 110);
-})();
 </script>
 </body>
 </html>
